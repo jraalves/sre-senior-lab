@@ -1,0 +1,56 @@
+name: ci
+
+# Sem segredo e sem acao de terceiros: só setup-python (mantido pela GitHub)
+# e os scripts do proprio repositorio.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  qualidade:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Sintaxe de todos os modulo Python
+        run: |
+          python3 -m compileall -q agent labs tools tests
+          find . -name '__pycache__' -type d -prune -exec rm -rf {} +
+
+      - name: Dados sinteticos reproduziveis (--check)
+        run: python3 tools/synth.py --check
+
+      - name: Testes unitarios
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Avaliacao do agente de triagem
+        run: python3 agent/evaluate.py --report
+
+      - name: Labs 06 e 07 (scripts novos precisam rodar)
+        run: |
+          python3 labs/lab-06-capacity-planning/capacity.py --report
+          python3 labs/lab-07-finops/cost_model.py --report
+
+      - name: Grep de anonimato (lista em tests/test_anonimato.py)
+        run: python3 -m unittest discover -s tests -p "test_anonimato.py" -v
+
+      - name: Publica metrics.json
+        uses: actions/upload-artifact@v4
+        with:
+          name: metrics-python-${{ matrix.python-version }}
+          path: agent/results/metrics.json
+          if-no-files-found: error
