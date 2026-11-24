@@ -1,0 +1,7 @@
+# Sem dependencias. Este reposatorio usa apenas a biblioteca padrao do Python 3
+# (stdlib: csv, json, argparse, unittest, datetime, unicodedata, pathlib).
+#
+# Nao ha pacotes a instalar: nao rode `pip install -r requirements.txt`.
+# A linha abaixo existe so para documentar a versao minima testada.
+#
+# python >= 3.10

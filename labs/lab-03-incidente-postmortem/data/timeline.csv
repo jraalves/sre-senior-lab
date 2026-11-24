@@ -1,0 +1,45 @@
+offset_min,fase,evento,fonte
+-150,pre-incidente,inicio da janela de estabilidade; p95 e taxa de erro dentro do alvo,prometheus
+-140,pre-incidente,"alerta de error budget em regime de aviso, sem queima relevante",alertmanager
+-101,pre-incidente,dashboards revisados pela equipe durante o handoff de plantao,grafana
+-95,pre-incidente,"deploy de rotinas de manutencao noturna, sem efeito no p95",argo-cd
+-84,pre-incidente,campanha de marketing aumenta a vazao de pedidos em 18%,chat
+-75,pre-incidente,pico de vazao sustentado; p95 permanece estavel,prometheus
+-62,pre-incidente,deploy do configmap payment-rules rev 41 no namespace payments-core,argo-cd
+-45,pre-incidente,provisao automatica de replicas por pico nao e acionada,cluster-autoscaler
+-38,pre-incidente,conclusao do deploy anterior sem erros visiveis,argo-cd
+-30,pre-incidente,"p95 sobe 12% em uma rota secundaria; sem alerta, abaixo do limiar",prometheus
+0,deteccao,alerta SLOErrorBudgetBurnFast (janela 1h) dispara para disponibilidade de payments-api,alertmanager
+5,deteccao,on-call do nivel 1 reconhece no chat de plantao,opsgenie
+7,deteccao,on-call abre o registro de incidente no tracker,tracker
+11,deteccao,primeira investigacao no dashboard de golden signals do servico,grafana
+17,deteccao,IC assume o incidente e declara impacto em checkout-service,chat
+24,deteccao,busca de alteracoes recentes lista o configmap aplicado 62 minutos antes,argo-cd
+29,deteccao,IC confirma o momento de deteccao efetiva apos leitura do alerta,chat
+35,diagnostico,"traco com o mesmo X-Request-Id mostra 2,1 s em validacao de assinatura",tempo
+42,diagnostico,consulta no Loki agrupa erros por padrao: 94% sao SignatureValidationFailed,loki
+50,diagnostico,diff entre as revisoes do configmap revela a flag strict_key_id habilitada,git
+57,diagnostico,documentacao interna do componente de chave exige rotacao completa antes de strict_key_id,wiki
+66,diagnostico,IP do IC aparece em mais de 40 linhas do log de auditoria do cluster,auditoria
+71,diagnostico,decisao de meio de incidente: reverter a flag em vez de rotacionar chaves na janela,chat
+80,diagnostico,IC registra o plano de acao e o responsavel pela reversao,chat
+88,diagnostico,pedido formal de rollback da revisao 41 para a 40 registrado no chat,chat
+94,contencao,aprovacao humana registrada: lider da plataforma autoriza a reversao,chat
+101,contencao,reversao executada pelo time de plataforma via pipeline,argo-cd
+109,contencao,flag strict_key_id confirmada desligada em todas as replicas,kubectl
+118,contencao,IC declara o incidente contido,chat
+130,recuperacao,erro 5xx volta ao nivel de base,prometheus
+140,recuperacao,pod isolado com label de manutencao para analise posterior de dump,kubectl
+144,recuperacao,"p95 retorna ao alvo; SLI acima de 99,9% por 15 minutos seguidos",prometheus
+152,resolvido,IC encerra o incidente; alertas quietos por 20 minutos,chat
+168,pos-incidente,on-call comeca a transcrever a timeline a partir dos canais,chat
+200,pos-incidente,rascunho do post-mortem criado com os dados deste arquivo,doc
+230,pos-incidente,IC registra o custo aproximado de toil para o post-mortem,doc
+245,pos-incidente,primeira reuniao de revisao; duas acoes contestadas,meet
+260,pos-incidente,reuniao de revisao no dia seguinte,meet
+270,pos-incidente,time de plataforma revisa a lista de acoes e prioriza,linear
+285,pos-incidente,seguimento do incidente encerrado; acoes viram itens no backlog,linear
+300,pos-incidente,IC e tech lead fazem follow-up de processo,meet
+320,pos-incidente,revisao de acoes fechada com dois itens adiados para o proximo trimestre,linear
+345,pos-incidente,reuniao de acompanhamento com a equipe,meet
+360,pos-incidente,post-mortem publicado no repositorio interno,git

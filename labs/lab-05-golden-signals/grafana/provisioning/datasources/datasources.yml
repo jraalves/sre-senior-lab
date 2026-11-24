@@ -1,0 +1,30 @@
+# Fontes de dados do Grafana para o lab-05. Sem usuario e sem senha: as tres
+# APIs locais dispensam autenticacao neste modo de lab. Ver SECURITY.md.
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    jsonData:
+      httpMethod: POST
+  - name: Loki
+    type: loki
+    access: proxy
+    url: http://loki:3100
+    jsonData:
+      derivedFields:
+        - name: request_id
+          matcherRegex: "request_id=(\\w+)"
+          url: "$${__value.raw}"
+  - name: Tempo
+    type: tempo
+    access: proxy
+    url: http://tempo:3200
+    jsonData:
+      tracesToLogsV2:
+        datasourceUid: ""
+        tags:
+          - key: request_id

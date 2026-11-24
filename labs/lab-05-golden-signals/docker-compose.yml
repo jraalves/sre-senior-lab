@@ -1,0 +1,86 @@
+# Lab-05 - stack open source para os quatro sinais dourados.
+#
+# Tudo aqui e imagem oficial e open source, com porta padrao de cada projeto e
+# NENHUM segredo: nenhuma chave, token, senha ou credencial aparece neste
+# arquivo. O Grafana sobe com acesso anonimo de leitor, o que e aceitavel SO
+# para um lab local em 127.0.0.1 - nunca para algo exposto na rede. Ver
+# ../../SECURITY.md e docs/decisoes/0003-stack-open-source.md.
+#
+# Subir:   docker compose up -d          (dentro de labs/lab-05-golden-signals)
+# Derrubar: docker compose down
+#
+# Dados: os arquivos de data/ sao gerados por tools/synth.py e lidos offline
+# pelos scripts do lab; o loadgen.py pode reemitir tracos para o collector.
+version: "3.9"
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.116.1
+    container_name: lab05-otel-collector
+    command: ["--config=/etc/otelcol/collector-config.yaml"]
+    volumes:
+      - ./otel/collector-config.yaml:/etc/otelcol/collector-config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP/gRPC
+      - "4318:4318"   # OTLP/HTTP
+      - "8889:8889"   # exportador prometheus do collector (scrapeado abaixo)
+      - "8888:8888"   # metricas internas do collector
+    depends_on:
+      - loki
+      - tempo
+    restart: unless-stopped
+
+  prometheus:
+    image: prom/prometheus:v2.55.1
+    container_name: lab05-prometheus
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-remote-write-receiver
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    ports:
+      - "9090:9090"   # porta padrao do Prometheus
+    depends_on:
+      - otel-collector
+    restart: unless-stopped
+
+  loki:
+    image: grafana/loki:3.3.2
+    container_name: lab05-loki
+    command: ["-config.file=/etc/loki/config.yml"]
+    ports:
+      - "3100:3100"   # HTTP (LogQL)
+      - "3101:3101"   # gRPC
+    restart: unless-stopped
+    volumes:
+      - ./loki/config.yml:/etc/loki/config.yml:ro
+
+  tempo:
+    image: grafana/tempo:2.6.0
+    container_name: lab05-tempo
+    command: ["-config.file=/etc/tempo/tempo.yml"]
+    ports:
+      - "3200:3200"   # API de leitura de traces
+    restart: unless-stopped
+    volumes:
+      - ./tempo/tempo.yml:/etc/tempo/tempo.yml:ro
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: lab05-grafana
+    environment:
+      # Sem segredo: acesso anonimo somente-leitor, lab local.
+      GF_AUTH_ANONYMOUS_ENABLED: "true"
+      GF_AUTH_ANONYMOUS_ORG_ROLE: "Viewer"
+      GF_AUTH_DISABLE_LOGIN_FORM: "true"
+      GF_PATHS_PROVISIONING: /etc/grafana/provisioning
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"   # porta padrao do Grafana
+    depends_on:
+      - prometheus
+      - loki
+      - tempo
+    restart: unless-stopped

@@ -1,0 +1,62 @@
+# Config do OpenTelemetry Collector (contrib) para o lab-05.
+#
+# Fluxo: aplicacao -> OTLP (4317/4318) -> collector -> Prometheus (metricas),
+# Loki (logs) e Tempo (tracos). Nenhuma credencial: ambiente local, so rede
+# do compose. Imagem oficial open source, ver docker-compose.yml.
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  memory_limiter:
+    check_interval: 5s
+    limit_mib: 256
+    spike_limit_mib: 64
+  batch:
+    send_batch_size: 512
+    timeout: 3s
+  # Marca todo sinal vindo deste lab com um atributo de recurso, para que a
+  # correlacao por request_id (correlate.py) tenha contraparte na UI.
+  resource/lab:
+    attributes:
+      - key: lab
+        value: lab-05-golden-signals
+        action: insert
+      - key: deployment.environment
+        value: synthetic
+        action: insert
+
+exporters:
+  # Metricas: o collector expoe um endpoint Prometheus e o Prometheus raspa.
+  prometheus:
+    endpoint: 0.0.0.0:8889
+    send_timestamps: true
+    metric_expiration: 30s
+  # Tracos: OTLP/HTTP nativo do Tempo.
+  otlphttp/tempo:
+    endpoint: http://tempo:4318
+  # Logs: Loki 3.x recebe OTLP por HTTP.
+  otlphttp/logs:
+    endpoint: http://loki:4318
+
+service:
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, resource/lab, batch]
+      exporters: [prometheus]
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, resource/lab, batch]
+      exporters: [otlphttp/tempo]
+    logs:
+      receivers: [otlp]
+      processors: [memory_limiter, resource/lab, batch]
+      exporters: [otlphttp/logs]
+  telemetry:
+    logs:
+      level: info

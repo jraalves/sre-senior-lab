@@ -1,0 +1,19 @@
+# Tempo em modo simples, OTLP/HTTP na porta padrao do protocolo dentro da rede
+# do compose, armazenamento em disco local. Sem segredo.
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        http:
+          endpoint: 0.0.0.0:4318
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /tempo/blocks
+    wal:
+      path: /tempo/wal
