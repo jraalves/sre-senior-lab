@@ -1,5 +1,56 @@
 # SRE Senior Lab
 
+## Comece por aqui: 2 minutos, sem instalar nada
+
+Pré-requisito: Python 3.10+ e `make`. Nenhuma dependência externa, nenhuma credencial,
+nenhuma rede — os dados são sintéticos com seed fixa.
+
+```bash
+git clone https://github.com/jraalves/sre-senior-lab.git && cd sre-senior-lab
+make test        # 88 testes
+make lab01       # SLI, SLO e orçamento de erro sobre o CSV sintético
+make eval        # métricas do agente de triagem (79 casos)
+```
+
+Saída real destes comandos em um clone limpo, hoje:
+
+```text
+$ make help
+  help    lista os alvos
+  run     gera os dados sinteticos (tools/synth.py) e confere com --check
+  test    roda a suite unittest
+  eval    avalia o agente de triagem e imprime o resumo medido
+  labs    roda os sete labs em sequencia
+  lab01   lab-01 SLI e orcamento de erro
+  lab02   lab-02 burn rate multi-janela
+  lab03   lab-03 timeline de incidente e postmortem
+  lab04   lab-04 runbooks (documentacao estatica, sem script proprio)
+  lab05   lab-05 sinais dourados e correlacao por request_id
+  lab06   lab-06 planejamento de capacidade
+
+$ make lab01
+
+por semana:
+  2026-W40  disp=99.95031%  orcamento=49.7%  latencia=41.2%
+  2026-W41  disp=99.82278%  orcamento=177.2%  latencia=44.0%
+  2026-W42  disp=99.94330%  orcamento=56.7%  latencia=54.0%
+  2026-W43  disp=99.84744%  orcamento=152.6%  latencia=39.9%
+
+Nada aqui veio de producao. Regras PromQL equivalentes em prometheus/slo_rules.yml.
+
+$ make eval
+
+## Leitura honesta do resultado
+
+Os pesos foram ajustados sobre este mesmo banco de 79 casos, entao **100% e um numero intra-amostra**: mede coerencia da heuristica com o vocabulario do dominio, nao generalizacao. Para que o numero signifique algo, o relatorio traz duas correcoes: (a) ablacao, mostrando que catalogo de alertname e janela de negacao tem contribuicao medida e pequena, e (b) teste de robustez, que quebra a entrada de forma deterministica. A acuracia sob inversao de ordem das palavras e o numero que eu citaria em uma conversa sobre o quanto isto generalizaria. Os casos marcados como ambiguos no campo `notes` do banco continuam sendo os primeiros a falhar. Ver `docs/decisoes/0002-heuristica-deterministica.md`.
+
+determinismo: identico sha256=5f680b9cded1c616
+```
+
+O caminho completo, lab por lab, é `make labs` (lab01 → lab07). Cada lab imprime o
+próprio relatório e recusa dados de produção — ver `docs/decisoes/`.
+
+
 Laboratório de prática de SRE/plantão: sete labs encadeados (SLO, alertagem por
 burn rate, postmortem, runbooks, sinais dourados, capacidade, custo) mais um
 agente de triagem determinístico com avaliador próprio. Tudo roda offline, com
