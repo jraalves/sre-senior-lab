@@ -1,4 +1,4 @@
-<!-- Licenca: Apache-2.0 (ver LICENSE). Conteudo: dados sinteticoss, seed fixa. -->
+<!-- Licenca: Apache-2.0 (ver LICENSE). Conteudo: dados sinteticos, seed fixa. -->
 # sre-senior-lab — instrucoes para agente (Claude Code / agentes compataveis)
 
 ## O que este projeto e
@@ -40,7 +40,7 @@ make test          # suíte unittest completa (88 testes)
 make eval          # roda a avaliacao do agente e imprime as metricas medidas
 make labs          # executa os 7 labs em sequencia
 make lab04         # executa um lab isolado (lab01..lab07)
-make run           # regenera dados sinteticoss e confere (--check)
+make run           # regenera dados sinteticos e confere (--check)
 python3 agent/triage.py --alertname P95LatencyHigh --text "p95 em 1,4 s"
 python3 agent/triage.py --stdin < agent/data/eval_cases.jsonl
 ```

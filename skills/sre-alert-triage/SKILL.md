@@ -22,8 +22,9 @@ runbook; truncando o texto a 48 caracteres, 98,73% e 70,89%.
    Varias mensagens de uma vez: `python3 agent/triage.py --stdin < arquivo.jsonl`.
 2. Ler no resultado: `categoria`, `runbook`, `confianca` e as regras que dispararam.
    Se `runbook == rb-00-escalada-humana`, **nao** escolher outro no lugar: escalar.
-3. Abrir o runbook indicado e executar a secao **Diagnostico (somente leitura)** antes
-   de qualquer acao de mitigacao.
+3. Abrir o runbook indicado e executar a secao **2. Diagnostico (somente leitura)** antes de
+   qualquer acao da secao **4. Acoes**. Se a acao for de risco alto, o proprio runbook exige
+   aprovacao humana de duas pessoas — o agente nunca executa essa parte sozinho.
 4. Registrar a triagem no incidente: alerta, categoria obtida, runbook, hora, proximo
    passo. Sem isso o post-mortem fica sem timeline.
 

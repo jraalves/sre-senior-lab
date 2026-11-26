@@ -17,9 +17,11 @@ Metricas calculadas por `python3 labs/lab-03-incidente-postmortem/analyze.py --r
 2. Rodar `make lab03` para obter MTTD / MTTA / MTTR **medidos** e colar os valores no
    documento. Se a timeline estiver incompleta, escreva "nao medido — falta o evento X";
    nunca arredondar sem base.
-3. Preencher as 11 secoes na ordem do template: Resumo, Impacto, Detecção,
-   Diagnóstico e contenção, Causa raiz, O que funcionou bem, O que não funcionou bem,
-   Ações, Métricas de tempo, Custo de toil estimado, Como este documento foi produzido.
+3. Preencher as 11 secoes na ordem exata do template (nomes verificados no arquivo):
+   `1. Resumo`, `2. Impacto`, `3. Detecção`, `4. Diagnóstico e contenção`, `5. Causa raiz`,
+   `6. O que funcionou bem`, `7. O que nao funcionou bem`, `8. Acoes`,
+   `9. Metricas de tempo`, `10. Custo de toil estimado`,
+   `11. Como este documento foi produzido`.
 4. Causa raiz em cinco porquês, terminando em **decisao de projeto ou de processo** —
    nunca em " alguem esqueceu". Cada porquê aponta para uma evidencia da timeline.
 5. Acoes: cada uma com dono, prazo, tipo (preventiva/detectiva/mitigadora) e o criterio
