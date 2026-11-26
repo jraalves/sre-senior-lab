@@ -3,7 +3,7 @@
 PY := python3
 LABS := labs
 
-.PHONY: help run test eval labs lab01 lab02 lab03 lab04 lab05 lab06 lab07 clean
+.PHONY: help run test eval lint ci labs lab01 lab02 lab03 lab04 lab05 lab06 lab07 clean
 
 help: ## lista os alvos
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-7s %s\n", $$1, $$2}'
@@ -50,3 +50,11 @@ clean: ## remove __pycache__, *.pyc e resultados gerados
 	find . -name '*.pyc' -type f -delete
 	rm -rf agent/results
 	@echo "limpo: __pycache__, *.pyc e agent/results"
+
+lint: ## compila todos os modulos e roda o portao de anonimato (sem rede)
+	$(PY) -m compileall -q agent labs tools tests
+	$(PY) -m unittest tests.test_anonimato -v
+
+ci: lint test ## os tres portoes locais: lint, testes e o gate de avaliacao
+	$(PY) agent/evaluate.py --check
+@echo "ci: lint, testes e avaliacao passaram (exit 0)"
