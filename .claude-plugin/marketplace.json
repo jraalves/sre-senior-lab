@@ -1,0 +1,25 @@
+{
+  "name": "sre-senior-lab",
+  "owner": {
+    "name": "Joao Renato Alves",
+    "email": "160369727+jraalves@users.noreply.github.com"
+  },
+  "metadata": {
+    "description": "Agent Skills de plantao SRE: triagem com evidencia, runbook, post-mortem sem culpa e revisao de mudanca.",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "sre-ops-skills",
+      "description": "Quatro skills que operam sobre os scripts determinísticos do sre-senior-lab (agente de triagem, labs de SLO/burn rate, templates de post-mortem e ADRs).",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/sre-alert-triage",
+        "./skills/sre-runbook-drafter",
+        "./skills/sre-postmortem-writer",
+        "./skills/sre-change-review"
+      ]
+    }
+  ]
+}

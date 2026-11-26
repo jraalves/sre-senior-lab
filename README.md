@@ -219,3 +219,29 @@ rule-family ablation and a deterministic input-perturbation stress test; under
 word-order inversion accuracy falls to 94.94% and runbook match to
 79.75%, which is the honest estimate of how much of the 100% generalizes.
 Contributions, licensing (MIT) and privacy notes are described above.
+
+
+---
+
+## Agent Skills (Claude Code)
+
+Este repositório traz 4 [Agent Skills](skills/README.md) no formato oficial
+(`skills/<nome>/SKILL.md`), empacotadas como plugin instalável em
+`.claude-plugin/marketplace.json`:
+
+| Skill | O que faz | Sobre o que opera de verdade |
+|---|---|---|
+| `sre-alert-triage` | escolhe categoria e runbook com evidência | `agent/triage.py`, `agent/data/eval_cases.jsonl` |
+| `sre-runbook-drafter` | escreve/revisa runbook no formato canônico | `labs/lab-04-runbooks/` |
+| `sre-postmortem-writer` | post-mortem sem culpa com MTTD/MTTA/MTTR medidos | `labs/lab-03-incidente-postmortem/` |
+| `sre-change-review` | libera, condiciona ou veta uma mudança | `labs/lab-01`, `labs/lab-02`, `docs/decisoes/` |
+
+As skills não medem nada sozinhas: os números citados nelas são do classificador
+heurístico deste repositório (79 casos; 94,94% de acerto de categoria e 79,75% de
+correspondência de runbook sob perturbação; 100% intra-amostra, declarado como overfit).
+Onde não há medição, o texto diz **"não medido"**.
+
+```bash
+make test   # suíte completa, incluindo o teste de anonimato
+make eval   # métricas do classificador
+```
